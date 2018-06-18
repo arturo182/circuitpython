@@ -226,6 +226,7 @@ extern const struct _mp_obj_module_t storage_module;
 extern const struct _mp_obj_module_t struct_module;
 extern const struct _mp_obj_module_t time_module;
 extern const struct _mp_obj_module_t supervisor_module;
+extern const struct _mp_obj_module_t display_module;
 extern const struct _mp_obj_module_t gamepad_module;
 
 extern const struct _mp_obj_module_t pyb_module;
@@ -275,6 +276,7 @@ extern const struct _mp_obj_module_t ble_module;
     { MP_OBJ_NEW_QSTR (MP_QSTR_storage         ), (mp_obj_t)&storage_module         },\
     { MP_OBJ_NEW_QSTR (MP_QSTR_struct          ), (mp_obj_t)&struct_module          }, \
     { MP_OBJ_NEW_QSTR (MP_QSTR_supervisor      ), (mp_obj_t)&supervisor_module      }, \
+    { MP_OBJ_NEW_QSTR (MP_QSTR_display         ), (mp_obj_t)&display_module         }, \
     { MP_OBJ_NEW_QSTR (MP_QSTR_gamepad         ), (mp_obj_t)&gamepad_module         }, \
     { MP_OBJ_NEW_QSTR (MP_QSTR_time            ), (mp_obj_t)&time_module            }, \
     { MP_ROM_QSTR     (MP_QSTR_pyb             ), MP_ROM_PTR(&pyb_module)           }, \
