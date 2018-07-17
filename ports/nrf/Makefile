@@ -129,7 +129,6 @@ DRIVERS_SRC_C += $(addprefix modules/,\
 	ubluepy/ubluepy_delegate.c \
 	ubluepy/ubluepy_constants.c \
 	ubluepy/ubluepy_scanner.c \
-	ubluepy/ubluepy_scan_entry.c \
 	)
 
 SRC_COMMON_HAL += \
@@ -180,6 +179,8 @@ ifneq ($(SD), )
 SRC_BINDINGS_ENUMS += \
 	bleio/Address.c \
 	bleio/AddressType.c \
+	bleio/AdvertisementData.c \
+	bleio/ScanEntry.c \
 	bleio/UUIDType.c
 endif
 
