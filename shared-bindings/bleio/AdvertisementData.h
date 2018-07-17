@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Glenn Ruben Bakke
+ * Copyright (c) 2018 Artur Pacholec
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,11 @@
  * THE SOFTWARE.
  */
 
-#include <string.h>
+#ifndef MICROPY_INCLUDED_SHARED_BINDINGS_BLEIO_ADVERTISEMENTDATA_H
+#define MICROPY_INCLUDED_SHARED_BINDINGS_BLEIO_ADVERTISEMENTDATA_H
+
 #include "py/obj.h"
-#include "py/runtime.h"
-#include "py/objstr.h"
-#include "py/objlist.h"
-#include "py/objarray.h"
-#include "py/objtuple.h"
-#include "py/qstr.h"
 
-#if MICROPY_PY_UBLUEPY_CENTRAL
+extern const mp_obj_type_t bleio_advertisementdata_type;
 
-#include "ble_drv.h"
-
-#endif // MICROPY_PY_UBLUEPY_CENTRAL
+#endif // MICROPY_INCLUDED_SHARED_BINDINGS_BLEIO_ADVERTISEMENTDATA_H

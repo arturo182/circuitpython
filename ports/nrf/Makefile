@@ -194,6 +194,8 @@ ifneq ($(SD), )
 SRC_BINDINGS_ENUMS += \
 	bleio/Address.c \
 	bleio/AddressType.c \
+	bleio/AdvertisementData.c \
+	bleio/ScanEntry.c \
 	bleio/UUIDType.c
 endif
 
