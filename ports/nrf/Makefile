@@ -119,12 +119,20 @@ SRC_C += \
 	lib/utils/sys_stdio_mphal.c \
 	lib/libc/string0.c \
 	lib/mp-readline/readline.c \
-	supervisor/shared/memory.c
 
-DRIVERS_SRC_C += $(addprefix modules/,\
-	ubluepy/modubluepy.c \
-	ubluepy/ubluepy_peripheral.c \
-	)
+ifeq ($(MCU_SUB_VARIANT),nrf52840)
+SRC_C += \
+	usb/tusb_descriptors.c \
+	usb/usb_msc_flash.c \
+	lib/tinyusb/src/portable/nordic/nrf5x/dcd_nrf5x.c \
+	lib/tinyusb/src/portable/nordic/nrf5x/hal_nrf5x.c \
+	lib/tinyusb/src/common/tusb_fifo.c \
+	lib/tinyusb/src/device/usbd.c \
+	lib/tinyusb/src/device/usbd_desc.c \
+	lib/tinyusb/src/class/msc/msc_device.c \
+	lib/tinyusb/src/class/cdc/cdc_device.c \
+	lib/tinyusb/src/tusb.c
+endif
 
 SRC_COMMON_HAL += \
 	board/__init__.c \
@@ -156,6 +164,7 @@ SRC_COMMON_HAL += \
 	bleio/Adapter.c \
 	bleio/Characteristic.c \
 	bleio/Descriptor.c \
+	bleio/Device.c \
 	bleio/Scanner.c \
 	bleio/Service.c \
 	bleio/UUID.c
