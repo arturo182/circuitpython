@@ -21,7 +21,7 @@ include ../../py/mkenv.mk
 -include mpconfigport.mk
 
 ifneq ($(SD), )
-	include drivers/bluetooth/bluetooth_common.mk
+	include bluetooth/bluetooth_common.mk
 endif
 
 # qstr definitions (must come before including py.mk)
@@ -44,6 +44,7 @@ INC += -I$(BUILD)
 INC += -I$(BUILD)/genhdr
 INC += -I./../../lib/cmsis/inc
 INC += -I./boards/$(BOARD)
+INC += -I./bluetooth
 INC += -I./modules/ubluepy
 INC += -I./modules/ble
 INC += -I./nrfx
@@ -51,8 +52,6 @@ INC += -I./nrfx/hal
 INC += -I./nrfx/mdk
 INC += -I./nrfx/drivers/include
 INC += -I../../lib/mp-readline
-INC += -I./drivers/bluetooth
-INC += -I./drivers
 INC += -I../../lib/tinyusb/src
 INC += -I./usb
 
@@ -120,8 +119,8 @@ SRC_C += \
 
 ifneq ($(SD), )
 SRC_C += \
-	drivers/bluetooth/ble_drv.c \
-	drivers/bluetooth/ble_uart.c
+	bluetooth/ble_drv.c \
+	bluetooth/ble_uart.c
 endif
 
 ifeq ($(MCU_SUB_VARIANT),nrf52840)
