@@ -102,8 +102,6 @@ SRC_C += \
 	tick.c \
 	background.c \
 	internal_flash.c \
-	drivers/bluetooth/ble_drv.c \
-	drivers/bluetooth/ble_uart.c \
 	boards/$(BOARD)/board.c \
 	nrfx/mdk/system_$(MCU_SUB_VARIANT).c \
 	nrfx/hal/nrf_nvmc.c \
@@ -119,6 +117,12 @@ SRC_C += \
 	lib/utils/sys_stdio_mphal.c \
 	lib/libc/string0.c \
 	lib/mp-readline/readline.c \
+
+ifneq ($(SD), )
+SRC_C += \
+	drivers/bluetooth/ble_drv.c \
+	drivers/bluetooth/ble_uart.c
+endif
 
 ifeq ($(MCU_SUB_VARIANT),nrf52840)
 SRC_C += \
