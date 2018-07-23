@@ -26,26 +26,41 @@
 
 #include "mphalport.h"
 
-#if MICROPY_PY_BLE_NUS
+#if (MICROPY_PY_BLE_NUS == 1)
 #include "ble_uart.h"
 #else
 #include "nrf_gpio.h"
 #include "nrf_pin.h"
 #endif
 
-#if !defined( NRF52840_XXAA) || ( defined(CFG_HWUART_FOR_SERIAL) && CFG_HWUART_FOR_SERIAL == 1 )
+#if (MICROPY_PY_BLE_NUS == 1)
+
+void serial_init(void) {
+    ble_uart_init();
+}
+
+bool serial_connected(void) {
+    return ble_uart_connected();
+}
+
+char serial_read(void) {
+    return (char) ble_uart_rx_chr();
+}
+
+bool serial_bytes_available(void) {
+    return ble_uart_stdin_any();
+}
+
+void serial_write(const char *text) {
+    ble_uart_stdout_tx_str(text);
+}
+
+#elif !defined(NRF52840_XXAA) || (defined(CFG_HWUART_FOR_SERIAL) && CFG_HWUART_FOR_SERIAL == 1)
 
 #define INST_NO 0
-
 nrfx_uart_t serial_instance = NRFX_UART_INSTANCE(INST_NO);
 
 void serial_init(void) {
-#if MICROPY_PY_BLE_NUS
-    ble_uart_init0();
-    while (!ble_uart_enabled()) {
-        ;
-    }
-#else
     nrfx_uart_config_t config = NRFX_UART_DEFAULT_CONFIG;
     config.pseltxd = MICROPY_HW_UART_TX;
     config.pselrxd = MICROPY_HW_UART_RX;
@@ -62,7 +77,6 @@ void serial_init(void) {
         NRFX_ASSERT(err);
 
     nrfx_uart_rx_enable(&serial_instance);
-#endif
 }
 
 bool serial_connected(void) {
@@ -88,7 +102,6 @@ void serial_write(const char *text) {
 void serial_init(void) {
     // usb is already initialized in board_init()
 }
-
 
 bool serial_connected(void) {
     return tud_cdc_connected();

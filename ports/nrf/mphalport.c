@@ -30,10 +30,10 @@
 #include "mphalport.h"
 #include "py/mpstate.h"
 
-
 #if (MICROPY_PY_BLE_NUS == 0)
 
-#if !defined( NRF52840_XXAA) || ( defined(CFG_HWUART_FOR_SERIAL) && CFG_HWUART_FOR_SERIAL == 1 )
+#if !defined(NRF52840_XXAA) || (defined(CFG_HWUART_FOR_SERIAL) && CFG_HWUART_FOR_SERIAL == 1)
+
 int mp_hal_stdin_rx_chr(void) {
     uint8_t data = 0;
 
@@ -105,8 +105,7 @@ void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
 
 #endif // USB
 
-#endif // NUS
-
+#endif // MICROPY_PY_BLE_NUS
 
 /*------------------------------------------------------------------*/
 /* delay
