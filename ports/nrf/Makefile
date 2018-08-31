@@ -116,25 +116,12 @@ SRC_C += \
 	lib/utils/sys_stdio_mphal.c \
 	lib/libc/string0.c \
 	lib/mp-readline/readline.c \
+	supervisor/shared/memory.c
 
 ifneq ($(SD), )
 SRC_C += \
 	bluetooth/ble_drv.c \
 	bluetooth/ble_uart.c
-endif
-
-ifeq ($(MCU_SUB_VARIANT),nrf52840)
-SRC_C += \
-	usb/tusb_descriptors.c \
-	usb/usb_msc_flash.c \
-	lib/tinyusb/src/portable/nordic/nrf5x/dcd_nrf5x.c \
-	lib/tinyusb/src/portable/nordic/nrf5x/hal_nrf5x.c \
-	lib/tinyusb/src/common/tusb_fifo.c \
-	lib/tinyusb/src/device/usbd.c \
-	lib/tinyusb/src/device/usbd_desc.c \
-	lib/tinyusb/src/class/msc/msc_device.c \
-	lib/tinyusb/src/class/cdc/cdc_device.c \
-	lib/tinyusb/src/tusb.c
 endif
 
 SRC_COMMON_HAL += \
@@ -351,7 +338,7 @@ dfu-flash: $(BUILD)/dfu-package.zip
 	$(NRFUTIL) --verbose dfu serial --package $^ -p $(SERIAL) -b 115200 --singlebank $(DFU_TOUCH)
 
 ## Create DFU package file
-dfu-gen: $(BUILD)/dfu-package.zip 
+dfu-gen: $(BUILD)/dfu-package.zip
 
 $(BUILD)/dfu-package.zip: $(BUILD)/$(OUTPUT_FILENAME).hex
 	$(NRFUTIL) dfu genpkg --sd-req 0xFFFE --dev-type 0x0052 --application $^ $(BUILD)/dfu-package.zip
