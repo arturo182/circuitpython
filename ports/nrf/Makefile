@@ -128,6 +128,7 @@ SRC_COMMON_HAL += \
 	board/__init__.c \
 	digitalio/__init__.c \
 	digitalio/DigitalInOut.c \
+	displayio/FourWire.c \
 	microcontroller/__init__.c \
 	microcontroller/Pin.c \
 	microcontroller/Processor.c \
@@ -197,6 +198,11 @@ SRC_SHARED_MODULE = \
 	bitbangio/OneWire.c \
 	bitbangio/SPI.c \
 	busio/OneWire.c \
+	displayio/__init__.c \
+	displayio/Bitmap.c \
+	displayio/Group.c \
+	displayio/Palette.c \
+	displayio/Sprite.c
 
 #	uheap/__init__.c \
 	ustack/__init__.c
@@ -210,6 +216,11 @@ SRC_SHARED_BINDINGS = \
 	bitbangio/SPI.c \
 	bitbangio/OneWire.c \
 	random/__init__.c \
+	displayio/__init__.c \
+	displayio/Bitmap.c \
+	displayio/Group.c \
+	displayio/Palette.c \
+	displayio/Sprite.c
 
 # USB source files for nrf52840
 ifeq ($(MCU_SUB_VARIANT),nrf52840)

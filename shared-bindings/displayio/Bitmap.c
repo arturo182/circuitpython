@@ -61,7 +61,7 @@ STATIC mp_obj_t displayio_bitmap_make_new(const mp_obj_type_t *type, size_t n_ar
     uint32_t height = mp_obj_get_int(pos_args[1]);
     uint32_t value_count = mp_obj_get_int(pos_args[2]);
     uint32_t power_of_two = 1;
-    while (value_count > (1U << power_of_two)) {
+    while (value_count >= (1U << power_of_two)) {
         power_of_two <<= 1;
     }
 

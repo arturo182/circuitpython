@@ -34,10 +34,10 @@
 #include "tick.h"
 
 safe_mode_t port_init(void) {
-    board_init();
-
     // Configure millisecond timer initialization.
     tick_init();
+
+    board_init();
 
 #if 0
     #ifdef CIRCUITPY_CANARY_WORD
@@ -61,7 +61,7 @@ void reset_port(void) {
  #endif
 
     pwmout_reset();
-    reset_all_pins();
+    //reset_all_pins();
 }
 
 

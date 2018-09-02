@@ -175,11 +175,18 @@ extern const struct _mp_obj_module_t supervisor_module;
 extern const struct _mp_obj_module_t gamepad_module;
 extern const struct _mp_obj_module_t usb_hid_module;
 extern const struct _mp_obj_module_t bleio_module;
+extern const struct _mp_obj_module_t displayio_module;
 
 #if MICROPY_PY_BLEIO
 #define BLEIO_MODULE { MP_ROM_QSTR(MP_QSTR_bleio), MP_ROM_PTR(&bleio_module) },
 #else
 #define BLEIO_MODULE
+#endif
+
+#ifdef CIRCUITPY_DISPLAYIO
+#define DISPLAYIO_MODULE { MP_ROM_QSTR(MP_QSTR_display), MP_ROM_PTR(&displayio_module) },
+#else
+#define DISPLAYIO_MODULE
 #endif
 
 #ifdef NRF52840_XXAA
@@ -204,7 +211,8 @@ extern const struct _mp_obj_module_t bleio_module;
     { MP_OBJ_NEW_QSTR (MP_QSTR_gamepad         ), (mp_obj_t)&gamepad_module         }, \
     { MP_OBJ_NEW_QSTR (MP_QSTR_time            ), (mp_obj_t)&time_module            }, \
     USBHID_MODULE  \
-    BLEIO_MODULE
+    BLEIO_MODULE \
+    DISPLAYIO_MODULE
 
 // extra built in names to add to the global namespace
 #define MICROPY_PORT_BUILTINS \

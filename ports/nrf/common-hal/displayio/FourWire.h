@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Glenn Ruben Bakke
+ * Copyright (c) 2018 Scott Shawcroft for Adafruit Industries
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,30 @@
  * THE SOFTWARE.
  */
 
-#define MICROPY_HW_BOARD_NAME       "PCA10056"
-#define MICROPY_HW_MCU_NAME         "nRF52840"
-#define MICROPY_PY_SYS_PLATFORM     "nRF52840-DK"
+#ifndef MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_DISPLAYIO_FOURWIRE_H
+#define MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_DISPLAYIO_FOURWIRE_H
 
-#define MICROPY_HW_UART_RX          NRF_GPIO_PIN_MAP(0, 8)
-#define MICROPY_HW_UART_TX          NRF_GPIO_PIN_MAP(0, 6)
-#define MICROPY_HW_UART_HWFC        (0)
+#include "common-hal/busio/SPI.h"
+#include "common-hal/digitalio/DigitalInOut.h"
+#include "shared-module/displayio/Group.h"
 
-#define PORT_HEAP_SIZE              (128 * 1024)
-#define CIRCUITPY_AUTORELOAD_DELAY_MS 500
+typedef struct {
+    mp_obj_base_t base;
+    busio_spi_obj_t bus;
+    digitalio_digitalinout_obj_t command;
+    digitalio_digitalinout_obj_t chip_select;
+    digitalio_digitalinout_obj_t reset;
+    uint16_t width;
+    uint16_t height;
+    uint16_t color_depth;
+    uint8_t set_column_command;
+    uint8_t set_row_command;
+    uint8_t write_ram_command;
+    displayio_group_t *current_group;
+    bool refresh;
+    uint64_t last_refresh;
+    int16_t colstart;
+    int16_t rowstart;
+} displayio_fourwire_obj_t;
 
-// Temp (could be removed) 0: usb cdc (default), 1 : hwuart (jlink)
-#define CFG_HWUART_FOR_SERIAL        0
-
-#define CIRCUITPY_DISPLAYIO
+#endif // MICROPY_INCLUDED_ATMEL_SAMD_COMMON_HAL_DISPLAYIO_FOURWIRE_H

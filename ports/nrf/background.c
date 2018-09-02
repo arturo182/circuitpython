@@ -24,11 +24,18 @@
  * THE SOFTWARE.
  */
 
+#include <mpconfigboard.h>
+
 #include "tusb.h"
+
+#include "shared-module/displayio/__init__.h"
 
 void run_background_tasks(void) {
 #ifdef NRF52840_XXAA
     tusb_task();
     tud_cdc_write_flush();
+#endif
+#ifdef CIRCUITPY_DISPLAYIO
+	displayio_refresh_display();
 #endif
 }
