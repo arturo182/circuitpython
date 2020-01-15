@@ -64,6 +64,10 @@ STATIC bool is_char_or3(mp_lexer_t *lex, byte c1, byte c2, byte c3) {
     return lex->chr0 == c1 || lex->chr0 == c2 || lex->chr0 == c3;
 }
 
+STATIC bool is_char_or4(mp_lexer_t *lex, byte c1, byte c2, byte c3, byte c4) {
+    return lex->chr0 == c1 || lex->chr0 == c2 || lex->chr0 == c3 || lex->chr0 == c4;
+}
+
 STATIC bool is_char_following(mp_lexer_t *lex, byte c) {
     return lex->chr1 == c;
 }
@@ -107,8 +111,8 @@ STATIC bool is_following_odigit(mp_lexer_t *lex) {
 
 STATIC bool is_string_or_bytes(mp_lexer_t *lex) {
     return is_char_or(lex, '\'', '\"')
-        || (is_char_or3(lex, 'r', 'u', 'b') && is_char_following_or(lex, '\'', '\"'))
-        || ((is_char_and(lex, 'r', 'b') || is_char_and(lex, 'b', 'r'))
+        || (is_char_or4(lex, 'r', 'R', 'u', 'b') && is_char_following_or(lex, '\'', '\"'))
+        || ((is_char_and(lex, 'r', 'b') || is_char_and(lex, 'b', 'r') || is_char_and(lex, 'R', 'b') || is_char_and(lex, 'b', 'R'))
             && is_char_following_following_or(lex, '\'', '\"'));
 }
 
@@ -317,7 +321,8 @@ STATIC void parse_string_literal(mp_lexer_t *lex, bool is_raw) {
                         case 'n': c = 0x0a; break;
                         case 'v': c = 0x0b; break;
                         case 'f': c = 0x0c; break;
-                        case 'r': c = 0x0d; break;
+                        case 'r':
+                        case 'R': c = 0x0d; break;
                         case 'u':
                         case 'U':
                             if (lex->tok_kind == MP_TOKEN_BYTES) {
@@ -492,11 +497,11 @@ void mp_lexer_to_next(mp_lexer_t *lex) {
             } else if (is_char(lex, 'b')) {
                 kind = MP_TOKEN_BYTES;
                 n_char = 1;
-                if (is_char_following(lex, 'r')) {
+                if (is_char_following(lex, 'r') || is_char_following(lex, 'R')) {
                     is_raw = true;
                     n_char = 2;
                 }
-            } else if (is_char(lex, 'r')) {
+            } else if (is_char(lex, 'r') || is_char(lex, 'R')) {
                 is_raw = true;
                 n_char = 1;
                 if (is_char_following(lex, 'b')) {
