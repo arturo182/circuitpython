@@ -77,7 +77,7 @@ void common_hal_busio_uart_construct(busio_uart_obj_t *self,
         const mcu_pin_obj_t * tx, const mcu_pin_obj_t * rx,
         const mcu_pin_obj_t * rts, const mcu_pin_obj_t * cts,
         const mcu_pin_obj_t * rs485_dir, bool rs485_invert,
-        uint32_t baudrate, uint8_t bits, uart_parity_t parity, uint8_t stop,
+        uint32_t baudrate, uint8_t bits, busio_uart_parity_t parity, uint8_t stop,
         mp_float_t timeout, uint16_t receiver_buffer_size, byte* receiver_buffer,
         bool sigint_enabled) {
 
@@ -86,7 +86,7 @@ void common_hal_busio_uart_construct(busio_uart_obj_t *self,
     self->timeout_ms = timeout * 1000;
 
     // We are transmitting one direction if one pin is NULL and the other isn't.
-    bool is_onedirection = (rx != NULL) != (tx != NULL);
+    bool is_onedirection = (rx == NULL) != (tx == NULL);
     bool uart_taken = false;
 
     const uint32_t rx_count = MP_ARRAY_SIZE(mcu_uart_rx_list);
@@ -101,7 +101,7 @@ void common_hal_busio_uart_construct(busio_uart_obj_t *self,
             // If TX is on, keep looking, else stop
             if (tx != NULL) {
                 for (uint32_t j = 0; j < tx_count; ++j) {
-                    if (mcu_uart_tx_list[j].pin != tx || 
+                    if (mcu_uart_tx_list[j].pin != tx ||
                         mcu_uart_tx_list[j].bank_idx != mcu_uart_rx_list[i].bank_idx) {
                         continue;
                     }
