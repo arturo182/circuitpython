@@ -28,17 +28,70 @@
 #include "py/mperrno.h"
 #include "py/runtime.h"
 
-#include "boards/board.h"
-#include "common-hal/microcontroller/Pin.h"
-#include "supervisor/shared/rgb_led_status.h"
+#include "shared-bindings/microcontroller/__init__.h"
+#include "shared-bindings/busio/UART.h"
+
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+#include "driver/spi_master.h"
+#include "driver/gpio.h"
+
+
+#include "mpconfigport.h"
+#include "lib/utils/interrupt_char.h"
+#include "py/gc.h"
+#include "py/mperrno.h"
+#include "py/runtime.h"
+#include "py/stream.h"
+#include "supervisor/shared/translate.h"
+#include "supervisor/shared/tick.h"
 
 void spi_reset(void) {
 
 }
 
+static spi_device_handle_t spi;
+#define LCD_HOST    SPI2_HOST
+#define DMA_CHAN    0
+
 void common_hal_busio_spi_construct(busio_spi_obj_t *self,
         const mcu_pin_obj_t * clock, const mcu_pin_obj_t * mosi,
         const mcu_pin_obj_t * miso) {
+
+    esp_err_t ret;
+
+    self->clock_pin = clock;
+    self->MOSI_pin = mosi;
+    self->MISO_pin = miso;
+
+    printf("1\r\n");
+    spi_bus_config_t buscfg={
+        .miso_io_num=miso->number,
+        .mosi_io_num=mosi->number,
+        .sclk_io_num=clock->number,
+        .quadwp_io_num=-1,
+        .quadhd_io_num=-1,
+    };
+
+    printf("2\r\n");
+    spi_device_interface_config_t devcfg={
+        .clock_speed_hz=SPI_MASTER_FREQ_80M,           //Clock out at 10 MHz
+        .mode=0,                                //SPI mode 0
+        .queue_size=10,                          //We want to be able to queue 7 transactions at a time
+    };
+
+    printf("3\r\n");
+    ret = spi_bus_initialize(LCD_HOST, &buscfg, DMA_CHAN);
+    ESP_ERROR_CHECK(ret);
+    printf("4, %d\r\n", ret);
+
+    printf("5\r\n");
+    ret = spi_bus_add_device(LCD_HOST, &devcfg, &spi);
+    ESP_ERROR_CHECK(ret);
+    printf("6, %d\r\n", ret);
+
     // uint8_t sercom_index;
     // uint32_t clock_pinmux = 0;
     // bool mosi_none = mosi == NULL;
@@ -184,15 +237,38 @@ bool common_hal_busio_spi_write(busio_spi_obj_t *self,
     if (len == 0) {
         return true;
     }
+
+    //printf("%s: len %d\r\n", __func__, len);
+
+   uint8_t *next_chunk = (uint8_t *) data;
+
+    while (len > 0) {
+        size_t chunk_size = MIN(len, SOC_SPI_MAXIMUM_BUFFER_SIZE);
+        uint8_t *chunk = next_chunk;
+
+        spi_transaction_t t = { 0 };
+        t.length = chunk_size*8;                 //Len is in bytes, transaction length is in bits.
+        t.tx_buffer = chunk;               //Data
+
+        spi_device_transmit(spi, &t);  //Transmit!
+
+        next_chunk += chunk_size;
+        len -= chunk_size;
+    }
+
+    //int ret;
+    //assert(ret==ESP_OK);            //Should have had no issues.
+
+
     // int32_t status;
-    if (len >= 16) {
+    //if (len >= 16) {
         // status = sercom_dma_write(self->spi_desc.dev.prvt, data, len);
-    } else {
+    //} else {
         // struct io_descriptor *spi_io;
         // spi_m_sync_get_io_descriptor(&self->spi_desc, &spi_io);
         // status = spi_io->write(spi_io, data, len);
-    }
-    return false; // Status is number of chars read or an error code < 0.
+    //}
+    return true; // Status is number of chars read or an error code < 0.
 }
 
 bool common_hal_busio_spi_read(busio_spi_obj_t *self,
@@ -200,40 +276,64 @@ bool common_hal_busio_spi_read(busio_spi_obj_t *self,
     if (len == 0) {
         return true;
     }
+
+    printf("%s: len %d\r\n", __func__, len);
+
+    //int ret;
+    spi_transaction_t t = { 0 };
+    t.length = len*8;                 //Len is in bytes, transaction length is in bits.
+    t.rx_buffer = data;               //Data
+
+    spi_device_transmit(spi, &t);  //Transmit!
+    //assert(ret==ESP_OK);            //Should have had no issues.
+
+
     // int32_t status;
-    if (len >= 16) {
+    //if (len >= 16) {
         // status = sercom_dma_read(self->spi_desc.dev.prvt, data, len, write_value);
-    } else {
+    //} else {
         // self->spi_desc.dev.dummy_byte = write_value;
 
         // struct io_descriptor *spi_io;
         // spi_m_sync_get_io_descriptor(&self->spi_desc, &spi_io);
 
         // status = spi_io->read(spi_io, data, len);
-    }
-    return false; // Status is number of chars read or an error code < 0.
+    //}
+    return true; // Status is number of chars read or an error code < 0.
 }
 
 bool common_hal_busio_spi_transfer(busio_spi_obj_t *self, uint8_t *data_out, uint8_t *data_in, size_t len) {
     if (len == 0) {
         return true;
     }
+
+    printf("%s: len %d\r\n", __func__, len);
+
+    //int ret;
+    spi_transaction_t t = { 0 };
+    t.length = len*8;                 //Len is in bytes, transaction length is in bits.
+    t.tx_buffer = data_out;               //Data
+    t.rx_buffer = data_in;
+    spi_device_transmit(spi, &t);  //Transmit!
+    //assert(ret==ESP_OK);            //Should have had no issues.
+
+
     // int32_t status;
-    if (len >= 16) {
+    //if (len >= 16) {
         // status = sercom_dma_transfer(self->spi_desc.dev.prvt, data_out, data_in, len);
-    } else {
+   // } else {
         // struct spi_xfer xfer;
         // xfer.txbuf = data_out;
         // xfer.rxbuf = data_in;
         // xfer.size = len;
         // status = spi_m_sync_transfer(&self->spi_desc, &xfer);
-    }
-    return false; // Status is number of chars read or an error code < 0.
+   // }
+    return true; // Status is number of chars read or an error code < 0.
 }
 
 uint32_t common_hal_busio_spi_get_frequency(busio_spi_obj_t* self) {
     // return samd_peripherals_spi_baud_reg_value_to_baudrate(hri_sercomspi_read_BAUD_reg(self->spi_desc.dev.prvt));
-    return 0;
+    return 40*1000*1000;
 }
 
 uint8_t common_hal_busio_spi_get_phase(busio_spi_obj_t* self) {

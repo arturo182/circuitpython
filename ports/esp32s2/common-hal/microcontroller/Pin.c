@@ -53,6 +53,14 @@ void reset_pin(const mcu_pin_obj_t* pin) {
     reset_pin_number(pin->number);
 }
 
+void common_hal_never_reset_pin(const mcu_pin_obj_t* pin) {
+//    never_reset_pins[pin->mux_idx] = true;
+}
+
+void common_hal_reset_pin(const mcu_pin_obj_t* pin) {
+
+}
+
 void reset_all_pins(void) {
     for (uint8_t i = 0; i < GPIO_PIN_COUNT; i++) {
         uint32_t iomux_address = GPIO_PIN_MUX_REG[i];
